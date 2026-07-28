@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로또 추첨기</title>
+    <meta
+      name="description"
+      content="웹에서 바로 사용하는 6/45 로또 추첨기"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <header class="top-nav">
+      <div class="nav-inner app-shell">
+        <div class="logo">StreamX</div>
+        <nav class="nav-links" role="navigation">
+          <ul class="product-tabs">
+            <li class="product-tab product-tab--active">홈</li>
+            <li class="product-tab">체험 <span class="new-tag">NEW</span></li>
+            <li class="product-tab">서비스 <span class="new-tag">NEW</span></li>
+          </ul>
+        </nav>
+        <div class="nav-actions">
+          <div class="search-pill">
+            <span class="search-text">어디로 가시나요?</span>
+            <button class="search-orb" aria-label="검색">🔍</button>
+          </div>
+          <button class="signin-btn">로그인</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="hero hero--big">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <p class="eyebrow">6 / 45</p>
+          <h1>로또 추첨기</h1>
+          <p class="lede">
+            버튼 한 번으로 6개의 번호와 보너스 번호를 뽑아보세요.
+            애니메이션과 기록 기능이 함께 들어간 웹 버전입니다.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="draw-area" aria-live="polite">
+            <div class="ball-stage" id="ballStage">
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--bonus">B</div>
+            </div>
+            <p class="status" id="statusText">추첨 버튼을 눌러 시작하세요.</p>
+          </div>
+
+          <div class="controls">
+            <button id="drawButton" class="primary-btn" type="button">
+              번호 추첨하기
+            </button>
+            <button id="resetButton" class="secondary-btn" type="button">
+              초기화
+            </button>
+          </div>
+
+          <div class="chatbot" aria-live="polite">
+            <form id="chatForm" class="chat-form">
+              <label for="dob">생년월일로 번호 추첨하기</label>
+              <input id="dob" name="dob" type="date" required />
+              <button id="chatDraw" class="primary-btn" type="submit">추첨 요청</button>
+            </form>
+
+            <div id="botResponse" class="bot-response" hidden>
+              <h3 id="botTitle"></h3>
+              <p id="botExplanation"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rows">
+        <div class="section-head">
+          <h2>최근 추첨 결과</h2>
+          <p class="muted">가로 스크롤로 지난 결과를 확인하세요.</p>
+        </div>
+
+        <div id="historyList" class="history-row">
+          <div class="history-empty">아직 추첨 기록이 없습니다.</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
