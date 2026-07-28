@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로또 추첨기</title>
+    <meta
+      name="description"
+      content="웹에서 바로 사용하는 6/45 로또 추첨기"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">6 / 45</p>
+          <h1>로또 추첨기</h1>
+          <p class="lede">
+            버튼 한 번으로 6개의 번호와 보너스 번호를 뽑아보세요.
+            애니메이션과 기록 기능이 함께 들어간 웹 버전입니다.
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="draw-area" aria-live="polite">
+            <div class="ball-stage" id="ballStage">
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--ghost">?</div>
+              <div class="ball ball--bonus">B</div>
+            </div>
+            <p class="status" id="statusText">추첨 버튼을 눌러 시작하세요.</p>
+          </div>
+
+          <div class="controls">
+            <button id="drawButton" class="primary-btn" type="button">
+              번호 추첨하기
+            </button>
+            <button id="resetButton" class="secondary-btn" type="button">
+              초기화
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="history-panel">
+        <div class="section-head">
+          <h2>최근 추첨 결과</h2>
+          <p>최신 결과가 위에 쌓입니다.</p>
+        </div>
+        <ul id="historyList" class="history-list">
+          <li class="history-empty">아직 추첨 기록이 없습니다.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
