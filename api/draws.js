@@ -127,7 +127,7 @@ async function handlePost(req, res) {
   sendJson(res, 200, { draw: saved[0] ?? null });
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       await handleGet(res);
@@ -146,4 +146,4 @@ module.exports = async (req, res) => {
       error: error.message || "Internal server error.",
     });
   }
-};
+}
