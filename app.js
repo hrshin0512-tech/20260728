@@ -8,8 +8,12 @@ const stageBalls = Array.from(ballStage.querySelectorAll(".ball"));
 const numberBalls = stageBalls.slice(0, 6);
 const bonusBall = stageBalls[6];
 
-const history = [];
+const API_URL = "/api/draws";
+const MAX_HISTORY = 5;
+
+let history = [];
 let isDrawing = false;
+let storageReady = false;
 
 function sampleUniqueNumbers(count, max) {
   const pool = Array.from({ length: max }, (_, index) => index + 1);
@@ -22,6 +26,26 @@ function sampleUniqueNumbers(count, max) {
 
 function sleep(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function formatDrawTime(value) {
+  if (!value) return "";
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function normalizeDraw(draw) {
+  return {
+    id: draw.id ?? null,
+    numbers: Array.isArray(draw.numbers) ? [...draw.numbers] : [],
+    bonus: Number(draw.bonus),
+    created_at: draw.created_at ?? draw.createdAt ?? new Date().toISOString(),
+  };
 }
 
 function updateStage(numbers, bonus) {
@@ -54,7 +78,10 @@ function renderHistory() {
 
     const label = document.createElement("div");
     label.className = "draw-label";
-    label.textContent = `${index + 1}회차`;
+    const timestamp = formatDrawTime(entry.created_at);
+    label.textContent = timestamp
+      ? `${index + 1}회차 · ${timestamp}`
+      : `${index + 1}회차`;
 
     const chips = document.createElement("div");
     chips.className = "chips";
@@ -74,6 +101,52 @@ function renderHistory() {
     item.append(label, chips);
     historyList.appendChild(item);
   });
+}
+
+async function fetchHistory() {
+  try {
+    const response = await fetch(API_URL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch draws: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const rows = Array.isArray(data.draws) ? data.draws : [];
+    history = rows.map(normalizeDraw).slice(0, MAX_HISTORY);
+    storageReady = true;
+    renderHistory();
+
+    if (history.length > 0) {
+      statusText.textContent = "Supabase 기록을 불러왔습니다.";
+    } else {
+      statusText.textContent = "추첨 버튼을 눌러 시작하세요.";
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("Supabase history fetch failed:", error);
+    storageReady = false;
+    statusText.textContent = "Supabase 연결이 없어 로컬 모드로 동작합니다.";
+    return false;
+  }
+}
+
+async function saveDraw(draw) {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(draw),
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || `Failed to save draw: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return normalizeDraw(data.draw);
 }
 
 async function drawLottery() {
@@ -106,11 +179,30 @@ async function drawLottery() {
 
   updateStage(finalNumbers, bonus);
   bonusBall.classList.add("ball--active");
-  statusText.textContent = `당첨 번호: ${finalNumbers.join(", ")} / 보너스: ${bonus}`;
+  statusText.textContent = storageReady
+    ? "Supabase에 저장 중..."
+    : "저장 서버를 찾는 중...";
 
-  history.unshift({ numbers: finalNumbers, bonus });
-  history.splice(5);
-  renderHistory();
+  const drawEntry = {
+    numbers: finalNumbers,
+    bonus,
+    created_at: new Date().toISOString(),
+  };
+
+  try {
+    const savedDraw = await saveDraw(drawEntry);
+    history.unshift(savedDraw);
+    history = history.slice(0, MAX_HISTORY);
+    renderHistory();
+    statusText.textContent = `당첨 번호: ${finalNumbers.join(", ")} / 보너스: ${bonus} · 저장 완료`;
+    storageReady = true;
+  } catch (error) {
+    console.error("Failed to save draw:", error);
+    history.unshift(drawEntry);
+    history = history.slice(0, MAX_HISTORY);
+    renderHistory();
+    statusText.textContent = `당첨 번호: ${finalNumbers.join(", ")} / 보너스: ${bonus} · 저장 실패, 화면에만 남겼어요.`;
+  }
 
   await sleep(250);
   bonusBall.classList.remove("ball--active");
@@ -123,11 +215,11 @@ function resetApp() {
   if (isDrawing) return;
   statusText.textContent = "추첨 버튼을 눌러 시작하세요.";
   updateStage(["?", "?", "?", "?", "?", "?"], "B");
-  history.length = 0;
-  renderHistory();
 }
 
 drawButton.addEventListener("click", drawLottery);
 resetButton.addEventListener("click", resetApp);
 
+updateStage(["?", "?", "?", "?", "?", "?"], "B");
 renderHistory();
+fetchHistory();

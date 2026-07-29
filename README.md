@@ -1,11 +1,21 @@
 # 로또 추첨기
 
 웹에서 바로 열어 사용할 수 있는 6/45 로또 추첨기입니다.
+추첨 결과는 Supabase에 저장됩니다.
 
 ## 실행
 
 1. `index.html`을 브라우저에서 직접 엽니다.
-2. 또는 폴더를 간단한 정적 서버로 띄워서 확인합니다.
+2. Supabase 저장까지 보려면 Vercel 배포 상태에서 열거나 `vercel dev`로 실행합니다.
+
+## Supabase 설정
+
+1. Supabase SQL 에디터에서 [`supabase.sql`](/Users/hrshin/0728/supabase.sql#L1)을 실행합니다.
+2. Vercel 프로젝트 환경 변수에 다음 값을 넣습니다.
+3. 배포를 다시 실행합니다.
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
 ## 기능
 
