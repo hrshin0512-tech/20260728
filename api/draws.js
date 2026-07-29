@@ -45,6 +45,29 @@ function normalizeNumbers(value) {
   return unique;
 }
 
+function normalizeMode(value) {
+  return value === "birthdate" ? "birthdate" : "random";
+}
+
+function normalizeBirthdate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null;
+  }
+
+  const date = new Date(`${value}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const iso = date.toISOString().slice(0, 10);
+  return iso === value ? value : null;
+}
+
+function normalizeExplanation(value) {
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 async function callSupabase(path, options = {}) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -70,7 +93,7 @@ async function callSupabase(path, options = {}) {
 
 async function handleGet(res) {
   const response = await callSupabase(
-    `${TABLE}?select=id,numbers,bonus,created_at&order=created_at.desc&limit=5`,
+    `${TABLE}?select=id,numbers,bonus,created_at,mode,birthdate,explanation&order=created_at.desc&limit=5`,
   );
 
   if (!response.ok) {
@@ -90,6 +113,9 @@ async function handlePost(req, res) {
   const body = await readBody(req);
   const numbers = normalizeNumbers(body.numbers);
   const bonus = Number(body.bonus);
+  const mode = normalizeMode(body.mode);
+  const birthdate = normalizeBirthdate(body.birthdate);
+  const explanation = normalizeExplanation(body.explanation);
 
   if (!numbers || !Number.isInteger(bonus) || bonus < 1 || bonus > 45) {
     sendJson(res, 400, {
@@ -105,13 +131,26 @@ async function handlePost(req, res) {
     return;
   }
 
+  if (mode === "birthdate" && !birthdate) {
+    sendJson(res, 400, {
+      error: "birthdate mode requires a valid YYYY-MM-DD birthdate.",
+    });
+    return;
+  }
+
   const response = await callSupabase(TABLE, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Prefer: "return=representation",
     },
-    body: JSON.stringify({ numbers, bonus }),
+    body: JSON.stringify({
+      numbers,
+      bonus,
+      mode,
+      birthdate,
+      explanation,
+    }),
   });
 
   if (!response.ok) {

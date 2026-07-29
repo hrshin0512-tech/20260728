@@ -219,6 +219,116 @@ button:disabled {
   padding: 24px 28px 30px;
 }
 
+.oracle-panel {
+  margin-top: 24px;
+  border: 1px solid rgba(122, 245, 197, 0.18);
+  border-radius: 28px;
+  padding: 24px 28px 30px;
+  background:
+    radial-gradient(circle at top right, rgba(121, 184, 255, 0.16), transparent 30%),
+    rgba(10, 18, 34, 0.76);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+}
+
+.oracle-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.oracle-form {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.field-label {
+  font-size: 0.94rem;
+  color: var(--muted);
+}
+
+.birthdate-input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font: inherit;
+}
+
+.birthdate-input:focus {
+  outline: 2px solid rgba(122, 245, 197, 0.5);
+  outline-offset: 2px;
+}
+
+.oracle-helper {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.oracle-chat {
+  max-height: 320px;
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.chat-message {
+  display: grid;
+  gap: 10px;
+  max-width: min(100%, 640px);
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chat-message--assistant {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.chat-message--user {
+  margin-left: auto;
+  background: rgba(122, 245, 197, 0.12);
+  border-color: rgba(122, 245, 197, 0.22);
+}
+
+.chat-role {
+  color: var(--accent);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.chat-message p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.chat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat-detail {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .section-head {
   display: flex;
   align-items: baseline;
@@ -249,14 +359,66 @@ button:disabled {
 }
 
 .history-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.history-content {
+  display: grid;
+  gap: 10px;
+}
+
+.history-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
 }
 
 .draw-label {
   color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.history-mode {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.history-mode--random {
+  background: rgba(121, 184, 255, 0.16);
+  color: #d7e9ff;
+}
+
+.history-mode--oracle {
+  background: rgba(122, 245, 197, 0.16);
+  color: #c6ffe9;
+}
+
+.history-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.history-badge {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.history-explanation {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
   font-size: 0.92rem;
 }
 
@@ -319,6 +481,7 @@ button:disabled {
 
   .hero-copy,
   .panel,
+  .oracle-panel,
   .history-panel {
     padding: 20px;
     border-radius: 22px;
@@ -333,11 +496,13 @@ button:disabled {
   }
 
   .controls,
-  .history-entry {
+  .history-entry,
+  .oracle-layout {
     grid-template-columns: 1fr;
   }
 
-  .history-entry {
+  .history-entry,
+  .oracle-layout {
     display: grid;
   }
 
@@ -346,6 +511,11 @@ button:disabled {
   }
 
   .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .history-top {
     flex-direction: column;
     align-items: flex-start;
   }

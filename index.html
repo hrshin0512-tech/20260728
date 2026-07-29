@@ -62,6 +62,39 @@
         </div>
       </section>
 
+      <section class="oracle-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow eyebrow--small">Birthday Chatbot</p>
+            <h2>생년월일 챗봇</h2>
+          </div>
+          <p>생년월일을 넣으면 추천 번호와 이유를 대화 형식으로 보여줍니다.</p>
+        </div>
+
+        <div class="oracle-layout">
+          <form id="oracleForm" class="oracle-form">
+            <label class="field-label" for="birthdateInput">생년월일</label>
+            <input
+              id="birthdateInput"
+              class="birthdate-input"
+              type="date"
+              required
+            />
+            <button id="oracleButton" class="primary-btn" type="submit">
+              번호 추천받기
+            </button>
+            <p class="oracle-helper">예: 1994-05-12</p>
+          </form>
+
+          <div id="oracleChat" class="oracle-chat" aria-live="polite">
+            <div class="chat-message chat-message--assistant">
+              <span class="chat-role">챗봇</span>
+              <p>생년월일을 입력하면 내가 번호와 이유를 설명해줄게요.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="history-panel">
         <div class="section-head">
           <h2>최근 추첨 결과</h2>

@@ -3,10 +3,41 @@ create table if not exists public.lotto_draws (
   numbers integer[] not null,
   bonus integer not null,
   created_at timestamptz not null default now(),
+  mode text not null default 'random',
+  birthdate date,
+  explanation text,
   constraint lotto_draws_numbers_length check (array_length(numbers, 1) = 6),
   constraint lotto_draws_bonus_range check (bonus between 1 and 45),
-  constraint lotto_draws_bonus_not_in_numbers check (bonus <> all(numbers))
+  constraint lotto_draws_bonus_not_in_numbers check (bonus <> all(numbers)),
+  constraint lotto_draws_mode_check check (mode in ('random', 'birthdate')),
+  constraint lotto_draws_birthdate_required check (mode <> 'birthdate' or birthdate is not null)
 );
+
+alter table public.lotto_draws
+  add column if not exists mode text not null default 'random',
+  add column if not exists birthdate date,
+  add column if not exists explanation text;
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'lotto_draws_mode_check'
+  ) then
+    alter table public.lotto_draws
+      add constraint lotto_draws_mode_check check (mode in ('random', 'birthdate'));
+  end if;
+
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'lotto_draws_birthdate_required'
+  ) then
+    alter table public.lotto_draws
+      add constraint lotto_draws_birthdate_required check (mode <> 'birthdate' or birthdate is not null);
+  end if;
+end $$;
 
 create index if not exists lotto_draws_created_at_idx
   on public.lotto_draws (created_at desc);
