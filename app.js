@@ -48,6 +48,23 @@ function normalizeDraw(draw) {
   };
 }
 
+async function readErrorMessage(response) {
+  const text = await response.text();
+
+  try {
+    const parsed = JSON.parse(text);
+    if (parsed && typeof parsed === "object") {
+      const message = parsed.error || parsed.message || "Unknown error";
+      const details = parsed.details ? `: ${parsed.details}` : "";
+      return `${message}${details}`;
+    }
+  } catch {
+    // Fall through to plain text response.
+  }
+
+  return text || `HTTP ${response.status}`;
+}
+
 function updateStage(numbers, bonus) {
   numberBalls.forEach((ball, index) => {
     ball.classList.remove("ball--ghost", "ball--active", "ball--ring");
@@ -107,7 +124,7 @@ async function fetchHistory() {
   try {
     const response = await fetch(API_URL);
     if (!response.ok) {
-      throw new Error(`Failed to fetch draws: ${response.status}`);
+      throw new Error(await readErrorMessage(response));
     }
 
     const data = await response.json();
@@ -126,7 +143,7 @@ async function fetchHistory() {
   } catch (error) {
     console.warn("Supabase history fetch failed:", error);
     storageReady = false;
-    statusText.textContent = "Supabase 연결이 없어 로컬 모드로 동작합니다.";
+    statusText.textContent = `Supabase 연결 실패: ${error.message}`;
     return false;
   }
 }
@@ -141,8 +158,7 @@ async function saveDraw(draw) {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Failed to save draw: ${response.status}`);
+    throw new Error(await readErrorMessage(response));
   }
 
   const data = await response.json();
@@ -201,7 +217,7 @@ async function drawLottery() {
     history.unshift(drawEntry);
     history = history.slice(0, MAX_HISTORY);
     renderHistory();
-    statusText.textContent = `당첨 번호: ${finalNumbers.join(", ")} / 보너스: ${bonus} · 저장 실패, 화면에만 남겼어요.`;
+    statusText.textContent = `당첨 번호: ${finalNumbers.join(", ")} / 보너스: ${bonus} · 저장 실패: ${error.message}`;
   }
 
   await sleep(250);

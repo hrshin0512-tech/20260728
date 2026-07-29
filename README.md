@@ -11,8 +11,9 @@
 ## Supabase 설정
 
 1. Supabase SQL 에디터에서 [`supabase.sql`](/Users/hrshin/0728/supabase.sql#L1)을 실행합니다.
-2. Vercel 프로젝트 환경 변수에 다음 값을 넣습니다.
-3. 배포를 다시 실행합니다.
+2. 새로 만든 Vercel 프로젝트 환경 변수에 다음 값을 넣습니다.
+3. 기존 Vercel 프로젝트에서 새 프로젝트로 옮기면 환경 변수는 자동 복사되지 않으니 다시 넣어야 합니다.
+4. 배포를 다시 실행합니다.
 
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
